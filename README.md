@@ -3,7 +3,6 @@
 
 Real-time AI travel companion — point your camera, speak naturally, and Iris explains the world around you.
 
-Built for the **Google Gemini Live Agent Challenge** using 100% Google Cloud + Gemini 2.0 Flash.
 
 ---
 
@@ -86,7 +85,7 @@ iris_Agent/
 ├── backend/
 │   ├── main.py             # FastAPI + WebSocket handler
 │   ├── agent.py            # Core agent decision loop
-│   ├── gemini_client.py    # Gemini 2.0 Flash API
+│   ├── gemini_client.py    # Gemini 3.0 Flash API
 │   ├── maps_client.py      # Google Maps Directions
 │   ├── firestore_client.py # Firestore memory
 │   ├── models.py           # Pydantic data models
@@ -112,7 +111,7 @@ iris_Agent/
 
 | Layer | Technology |
 |---|---|
-| AI Brain | Gemini 2.0 Flash (Google GenAI SDK) |
+| AI Brain | Gemini 3.0 Flash (Google GenAI SDK) |
 | Backend | FastAPI + Python 3.11 |
 | Frontend | Vanilla HTML/CSS/JS |
 | Real-time | WebSocket |
@@ -149,10 +148,3 @@ Then set secret env vars in [Cloud Run Console](https://console.cloud.google.com
 
 ---
 
-## Hackathon: Google Gemini Live Agent Challenge
-
-- Uses **Gemini 2.0 Flash** multimodal model
-- Built with **Google GenAI SDK**
-- Deployed on **Google Cloud Run**
-- Uses **Firestore** for persistent memory
-- Uses **Google Maps API** for navigation
