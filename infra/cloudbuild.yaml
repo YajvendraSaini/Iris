@@ -1,0 +1,76 @@
+# ── Iris — Cloud Build CI/CD ─────────────────────────────────────────────────
+# Triggered automatically on push to main branch.
+# Substitutions are set in Cloud Build trigger config.
+#
+# Required substitutions (set in Cloud Build console):
+#   _REGION           = us-central1
+#   _SERVICE_NAME     = iris-backend
+#   _SECRET_GEMINI    = GEMINI_API_KEY        (Secret Manager name)
+#   _SECRET_MAPS      = GOOGLE_MAPS_API_KEY   (Secret Manager name)
+# ─────────────────────────────────────────────────────────────────────────────
+
+substitutions:
+  _REGION: us-central1
+  _SERVICE_NAME: iris-backend
+  _SECRET_GEMINI: GEMINI_API_KEY
+  _SECRET_MAPS: GOOGLE_MAPS_API_KEY
+
+steps:
+  # ── 1. Build the Docker image from repo root ────────────────────────────────
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build'
+    args:
+      - 'build'
+      - '-f'
+      - 'backend/Dockerfile'      # Dockerfile is in /backend but context is root
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}'
+      - '.'                       # repo root = build context (includes /frontend)
+
+  # ── 2. Push to Container Registry ──────────────────────────────────────────
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}'
+
+  # ── 3. Deploy to Cloud Run ──────────────────────────────────────────────────
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME}'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
+      - '--min-instances'
+      - '0'
+      - '--max-instances'
+      - '10'
+      - '--timeout'
+      - '300'
+      - '--set-env-vars'
+      - 'GOOGLE_CLOUD_PROJECT=$PROJECT_ID,FIRESTORE_DATABASE=(default)'
+      - '--set-secrets'
+      - 'GEMINI_API_KEY=${_SECRET_GEMINI}:latest,GOOGLE_MAPS_API_KEY=${_SECRET_MAPS}:latest'
+      - '--quiet'
+
+images:
+  - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}'
+
+timeout: '900s'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

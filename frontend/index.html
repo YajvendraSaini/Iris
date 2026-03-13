@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Iris — AI Travel Companion</title>
+  <meta name="description" content="Real-time AI travel companion. Point your camera, speak naturally, and Iris explains the world around you." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+
+  <!-- ── Camera Feed Layer ─────────────────────────────── -->
+  <div id="camera-container">
+    <video id="camera-feed" autoplay playsinline muted></video>
+
+    <!-- AR Canvas overlay (arrows drawn here) -->
+    <canvas id="ar-canvas"></canvas>
+
+    <!-- Text Overlay (Gemini response summary) -->
+    <div id="text-overlay" class="hidden">
+      <div id="overlay-summary"></div>
+      <div id="overlay-detail" class="hidden"></div>
+    </div>
+
+    <!-- Navigation overlay banner -->
+    <div id="nav-overlay" class="hidden">
+      <div id="nav-step"></div>
+    </div>
+
+    <!-- Status indicator -->
+    <div id="status-indicator">
+      <div id="status-dot"></div>
+      <span id="status-text">Connecting…</span>
+    </div>
+
+    <!-- Iris logo top-left -->
+    <div id="iris-logo">
+      <span class="logo-icon">🌍</span>
+      <span class="logo-text">IRIS</span>
+    </div>
+  </div>
+
+  <!-- ── Bottom Controls ────────────────────────────────── -->
+  <div id="controls">
+    <!-- Session info -->
+    <div id="session-info">
+      <span id="gps-label">📍 GPS: --</span>
+    </div>
+
+    <!-- Main mic button -->
+    <div id="mic-wrapper">
+      <button id="mic-btn" class="mic-idle" title="Hold to speak">
+        <svg id="mic-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M19 10a7 7 0 0 1-14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 19v4M8 23h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div id="mic-pulse"></div>
+      </button>
+      <span id="mic-label">Hold to speak</span>
+    </div>
+
+    <!-- Side controls -->
+    <div id="side-controls">
+      <button id="interrupt-btn" title="Stop Iris" class="ctrl-btn hidden">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="6" width="12" height="12" rx="2"/>
+        </svg>
+      </button>
+      <button id="detail-btn" title="Show detail" class="ctrl-btn">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button id="camera-flip-btn" title="Flip camera" class="ctrl-btn">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 7h-3.5l-1.5-2H9L7.5 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M15 13a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" stroke="currentColor" stroke-width="2"/>
+          <path d="M9 4l1.5 1.5L9 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Text input fallback (for desktop testing) ─────── -->
+  <div id="text-input-panel">
+    <input type="text" id="text-input" placeholder="Type a message to Iris (desktop fallback)…" />
+    <button id="send-btn">Send</button>
+  </div>
+
+  <!-- ── Connection / Permission Errors ────────────────── -->
+  <div id="error-modal" class="hidden">
+    <div id="error-box">
+      <div id="error-icon">⚠️</div>
+      <div id="error-title">Setup Required</div>
+      <div id="error-message"></div>
+      <button id="error-retry-btn">Retry</button>
+    </div>
+  </div>
+
+  <!-- ── Scripts ─────────────────────────────────────────── -->
+  <script src="/static/ar_overlay.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
